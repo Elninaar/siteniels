@@ -2,96 +2,190 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mon Site Stylé</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet" />
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #74ebd5, #acb6e5);
-      color: #333;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 2rem;
-    }
-
-    header {
-      background-color: rgba(255, 255, 255, 0.9);
-      padding: 1.5rem 2rem;
-      border-radius: 1rem;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 2rem;
-      color: #2c3e50;
-    }
-
-    nav {
-      margin-top: 1rem;
-    }
-
-    nav a {
-      margin: 0 1rem;
-      text-decoration: none;
-      color: #3498db;
-      font-weight: bold;
-    }
-
-    section {
-      background-color: rgba(255, 255, 255, 0.95);
-      padding: 2rem;
-      border-radius: 1rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      max-width: 600px;
-      width: 100%;
-      margin-bottom: 2rem;
-    }
-
-    footer {
-      color: white;
-      opacity: 0.8;
-      font-size: 0.9rem;
-    }
-
-    @media (max-width: 600px) {
-      section {
-        padding: 1rem;
-      }
-
-      header h1 {
-        font-size: 1.5rem;
-      }
-    }
-  </style>
+  <title>Major and Minor Chord Trainer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <header>
-    <h1>Bienvenue sur mon site moderne 🎨</h1>
-    <nav>
-      <a href="index.html">Accueil</a>
-      <a href="page2.html">Page 2</a>
-      <a href="contact.html">Contact</a>
-    </nav>
-  </header>
+<body class="bg-gradient-to-br from-purple-100 via-blue-100 to-white text-gray-800 p-6 font-sans min-h-screen">
 
-  <section>
-    <h2>Un contenu simple et utile</h2>
-    <p>
-      Ce site est un projet personnel que je développe pour m'exercer et peut-être en faire quelque chose de plus grand. 😊
-    </p>
-    <p>
-      Tu peux créer autant de pages que tu veux et les relier entre elles simplement avec HTML.
-    </p>
-  </section>
+  <div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold text-center mb-8 tracking-wide">🎵 Major and Minor Chord Trainer</h1>
 
-  <footer>
-    © 2025 - MonSiteCool - Tous droits réservés.
-  </footer>
+    <div id="topNotes" class="text-center font-semibold text-xl mb-6 tracking-widest text-indigo-700">
+      DO MI SOL SI RE FA LA
+    </div>
+
+    <div class="bg-white shadow-md rounded-xl p-6 mb-8">
+      <h2 class="text-lg font-semibold mb-3">Trouve les notes de l'accord : <span id="chordName" class="text-indigo-600"></span></h2>
+      <div id="answer" class="mb-4 font-medium"></div>
+      <div id="notes" class="flex flex-wrap gap-2 mb-4"></div>
+      <div class="flex gap-4">
+        <button onclick="checkAnswers()" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition">Vérifier</button>
+        <button onclick="resetSelection()" class="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400 transition">Réinitialiser</button>
+      </div>
+      <p id="result" class="mt-4 font-semibold"></p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div>
+        <h3 class="text-lg font-semibold mb-3 text-indigo-700">Accords Majeurs</h3>
+        <div class="overflow-x-auto rounded-xl shadow">
+          <table class="w-full table-auto text-sm bg-white border border-gray-200 rounded">
+            <thead class="bg-gray-100 text-gray-700">
+              <tr>
+                <th class="p-3 text-left border-b">Accord</th>
+                <th class="p-3 text-left border-b">Notes</th>
+              </tr>
+            </thead>
+            <tbody id="majorChordsTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-3 text-indigo-700">Accords Mineurs</h3>
+        <div class="overflow-x-auto rounded-xl shadow">
+          <table class="w-full table-auto text-sm bg-white border border-gray-200 rounded">
+            <thead class="bg-gray-100 text-gray-700">
+              <tr>
+                <th class="p-3 text-left border-b">Accord</th>
+                <th class="p-3 text-left border-b">Notes</th>
+              </tr>
+            </thead>
+            <tbody id="minorChordsTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const chords = {
+      'C': ['C', 'E', 'G'],
+      'Cm': ['C', 'D#', 'G'],
+      'D': ['D', 'F#', 'A'],
+      'Dm': ['D', 'F', 'A'],
+      'E': ['E', 'G#', 'B'],
+      'Em': ['E', 'G', 'B'],
+      'F': ['F', 'A', 'C'],
+      'Fm': ['F', 'G#', 'C'],
+      'G': ['G', 'B', 'D'],
+      'Gm': ['G', 'A#', 'D'],
+      'A': ['A', 'C#', 'E'],
+      'Am': ['A', 'C', 'E'],
+      'B': ['B', 'D#', 'F#'],
+      'Bm': ['B', 'D', 'F#']
+    };
+
+    const allNotes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+    const chordKeys = Object.keys(chords);
+    let currentChord = '';
+    let chordNotes = [];
+    const selectedNotes = new Set();
+
+    const chordNameElem = document.getElementById('chordName');
+    const answerElem = document.getElementById('answer');
+    const container = document.getElementById('notes');
+    const resultElem = document.getElementById('result');
+    const majorChordsTable = document.getElementById('majorChordsTable');
+    const minorChordsTable = document.getElementById('minorChordsTable');
+
+    function newExercise() {
+      resetSelection();
+      currentChord = chordKeys[Math.floor(Math.random() * chordKeys.length)];
+      chordNotes = chords[currentChord];
+      chordNameElem.textContent = currentChord;
+      answerElem.textContent = '';
+    }
+
+    function createNoteButtons() {
+      container.innerHTML = '';
+      allNotes.forEach(note => {
+        const btn = document.createElement('button');
+        btn.textContent = note;
+        btn.className = 'note-btn bg-white border border-gray-400 rounded w-16 h-10 text-sm hover:bg-indigo-100 transition flex items-center justify-center';
+        btn.onclick = () => {
+        if (btn.disabled) return;
+        if (selectedNotes.has(note)) {
+          selectedNotes.delete(note);
+          btn.classList.remove('bg-gray-300', 'text-gray-600', 'border-4', 'border-indigo-800');
+        } else {
+          selectedNotes.add(note);
+          btn.classList.add('bg-gray-300', 'text-gray-600', 'border-4', 'border-indigo-800');
+        }
+        btn.classList.remove('bg-green-300', 'bg-red-300');
+        resultElem.textContent = '';
+      };
+        container.appendChild(btn);
+      });
+    }
+
+    function checkAnswers() {
+      document.querySelectorAll('.note-btn').forEach(btn => {
+        const note = btn.textContent;
+        if (selectedNotes.has(note)) {
+          if (chordNotes.includes(note)) {
+            btn.classList.add('bg-green-300');
+            btn.classList.remove('bg-red-300');
+          } else {
+            btn.classList.add('bg-red-300');
+            btn.classList.remove('bg-green-300');
+          }
+        } else {
+          btn.classList.remove('bg-green-300', 'bg-red-300');
+        }
+      });
+
+      const correctSelected = [...selectedNotes].every(n => chordNotes.includes(n));
+      const allRequiredSelected = chordNotes.every(n => selectedNotes.has(n));
+
+      if (correctSelected && allRequiredSelected) {
+        resultElem.textContent = "✅ Bravo, accord correct ! Prochain exercice dans 2 secondes...";
+        document.querySelectorAll('.note-btn').forEach(btn => {
+          btn.disabled = true;
+          btn.classList.add('opacity-50', 'cursor-not-allowed');
+        });
+        setTimeout(() => newExercise(), 2000);
+      } else {
+        resultElem.textContent = "❌ Il manque ou il y a des erreurs.";
+      }
+    }
+
+    function resetSelection() {
+      selectedNotes.clear();
+      document.querySelectorAll('.note-btn').forEach(btn => {
+        btn.classList.remove(
+        'bg-gray-300',
+        'text-gray-600',
+        'bg-green-300',
+        'bg-red-300',
+        'opacity-50',
+        'cursor-not-allowed',
+        'border-4',
+        'border-indigo-800'
+        );
+        btn.disabled = false;
+      });
+      resultElem.textContent = '';
+    }
+
+    function fillChordsTables() {
+      majorChordsTable.innerHTML = '';
+      minorChordsTable.innerHTML = '';
+      for (const [chord, notes] of Object.entries(chords)) {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-gray-50 transition";
+        tr.innerHTML = `<td class="p-3 border-b">${chord}</td><td class="p-3 border-b">${notes.join(', ')}</td>`;
+        if (chord.endsWith('m')) {
+          minorChordsTable.appendChild(tr);
+        } else {
+          majorChordsTable.appendChild(tr);
+        }
+      }
+    }
+
+    createNoteButtons();
+    newExercise();
+    fillChordsTables();
+  </script>
 </body>
 </html>
